@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ddir": {
+      "commandName": "Project",
+      "commandLineArgs": "D:\\Xiaomi 2404APC5FG POCO\\Camera --limit 10 --pattern *.mp4 --prefix move '--suffix 'aa"
+    }
+  }
+}
