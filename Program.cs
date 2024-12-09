@@ -51,13 +51,21 @@ if (thePath.isNotNullOrEmpty())
     curDir = thePath;
 
 var theDir = new DirectoryInfo(curDir);
-IEnumerable<FileInfo>? theAll = null;
+IEnumerable<string>? theAll = null;
 
 if (thePattern.isNullOrEmpty())
-    theAll = theDir.EnumerateFiles();
+{
+    var theFiles = theDir.EnumerateFiles().Select(oo=>oo.ToString());
+    var theDirs = theDir.EnumerateDirectories().Select(oo => oo.ToString());
+    theAll = theFiles.Concat(theDirs);
+}
 
 if (thePattern.isNotNullOrEmpty())
-    theAll = theDir.GetFiles(thePattern);
+{
+    var theFiles = theDir.EnumerateFiles(thePattern).Select(oo => oo.ToString());
+    var theDirs = theDir.EnumerateDirectories(thePattern).Select(oo => oo.ToString());
+    theAll = theFiles.Concat(theDirs);
+}
 
 if (toLimit != null && theAll != null)
     theAll = theAll.Take(toLimit.Value);
@@ -68,7 +76,7 @@ if (header.isNotNullOrEmpty())
 
 if (theAll != null)
 {
-    finale.AddRange(theAll.Select(oo => (thePrefix + oo + theSuffix).Replace("''",@"""")));
+    finale.AddRange(theAll.Select(oo => ($"{thePrefix}{oo}{theSuffix}").Replace("''",@"""")));
 }
 
 if (finale != null)
