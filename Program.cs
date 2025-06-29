@@ -1,83 +1,52 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using jomiunsExtensions;
+using netCoreHelper;
 
-var satuCommandPanjang = string.Join(" ", args);
-var leItems = satuCommandPanjang.Split("--").Select(oo=>oo.Trim()).ToArray();
-var thePath = leItems[0];
-int? toLimit = null;
-var thePattern = "";
-var thePrefix = "";
-var theSuffix = "";
-var header = "";
 
-foreach (var aCommand in leItems)
-{
-    if (aCommand.StartsWith("limit"))
-    {
-        var infos = aCommand.Split(' ', 2);
-        toLimit = int.Parse(infos[1]);
-    }
+var something = new Kobra(args);
+var theLimit = null as int?;
+var curDir = Environment.CurrentDirectory;
+var parLimit = something.registerCommand("limit", "Set the limit of items to display", 50);
+var parPattern = something.registerCommand<string?>("pattern", "Set the pattern to filter files and directories");
+var parPrefix = something.registerCommand<string?>("prefix", "Set the prefix for each item", "");
+var parSuffix = something.registerCommand<string?>("suffix", "Set the suffix for each item", "");
+var parPath = something.registerCommand<string?>("path", "Set the path to search in", curDir);
+var parIsDeep = something.registerCommand<bool>("deep", "Set to true to search recursively");
+var parHeader = something.registerCommand<string?>("header", "Set the header for the output", null);
 
-    if (aCommand.StartsWith("header"))
-    {
-        var infos = aCommand.Split(' ', 2);
-        header = infos[1];
-    }
+if (something.start() == false)
+    return;
 
-    if (aCommand.StartsWith("pattern"))
-    {
-        var infos = aCommand.Split(' ', 2);
-        thePattern = infos[1].Trim();
-    }
+if (parLimit.isExists)
+    theLimit = parLimit.theResult;
 
-    if (aCommand.StartsWith("prefix"))
-    {
-        var infos = aCommand.Split(' ', 2);
-        thePrefix = infos[1];
-    }
-
-    if (aCommand.StartsWith("suffix"))
-    {
-        var infos = aCommand.Split(' ', 2);
-        theSuffix = infos[1];
-    }
-}
-
-string? curDir = Environment.CurrentDirectory;
-if (thePath.isNullOrEmpty())
-    curDir = Environment.CurrentDirectory;
-
-if (thePath.isNotNullOrEmpty())
-    curDir = thePath;
+if (parPath.isExists)
+    curDir = parPath.theResult ?? $"{parPath.defaultValue}";
 
 var theDir = new DirectoryInfo(curDir);
-IEnumerable<string>? theAll = null;
+var theAll = null as IEnumerable<string>;
+var searchPattern = "*.*";
+var searchOption = SearchOption.TopDirectoryOnly;
 
-if (thePattern.isNullOrEmpty())
-{
-    var theFiles = theDir.EnumerateFiles().Select(oo=>oo.ToString());
-    var theDirs = theDir.EnumerateDirectories().Select(oo => oo.ToString());
-    theAll = theFiles.Concat(theDirs);
-}
+if (parPattern.isExists)
+    searchPattern = parPattern.theResult;
 
-if (thePattern.isNotNullOrEmpty())
-{
-    var theFiles = theDir.EnumerateFiles(thePattern).Select(oo => oo.ToString());
-    var theDirs = theDir.EnumerateDirectories(thePattern).Select(oo => oo.ToString());
-    theAll = theFiles.Concat(theDirs);
-}
+if (parIsDeep.isExists)
+    searchOption = SearchOption.AllDirectories;
 
-if (toLimit != null && theAll != null)
-    theAll = theAll.Take(toLimit.Value);
+var theFiles = theDir.EnumerateFiles(searchPattern, searchOption).Select(oo => oo.ToString());
+var theDirs = theDir.EnumerateDirectories(searchPattern, searchOption).Select(oo => oo.ToString());
+theAll = theFiles.Concat(theDirs);
+
+if (theAll != null && theLimit != null)
+    theAll = theAll.Take(theLimit.Value);
+
 
 var finale = new List<string>();
-if (header.isNotNullOrEmpty())
-    finale.Add(header);
+if (parHeader.isExists)
+    finale.Add(parHeader.theResult ?? $"{parHeader.defaultValue}");
 
 if (theAll != null)
-{
-    finale.AddRange(theAll.Select(oo => ($"{thePrefix}{oo}{theSuffix}").Replace("''",@"""")));
-}
+    finale.AddRange(theAll.Select(oo => ($"{parPrefix.theResult}{oo}{parSuffix.theResult}").Replace("''", @"""")));
 
 if (finale != null)
 {

@@ -2,7 +2,7 @@
   "profiles": {
     "ddir": {
       "commandName": "Project",
-      "commandLineArgs": "D:\\Xiaomi 2404APC5FG POCO\\Camera --limit 10 --pattern group*"
+      "commandLineArgs": "--prefix something deep false"
     }
   }
 }
