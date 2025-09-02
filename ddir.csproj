@@ -8,8 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="jomiunsComHelper" Version="2.1.15" />
-    <PackageReference Include="jomiuns_ddir_core" Version="1.0.0" />
+    <PackageReference Include="jomiuns_ddir_core" Version="1.0.2" />
   </ItemGroup>
 
 </Project>

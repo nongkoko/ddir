@@ -1,17 +1,19 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using netCoreHelper;
+
+using jomiunsExtensions;
 
 internal class myCore(string[] theArgs) : core_ddir.theCoreLogic(theArgs)
 {
-    public override IEnumerable<string>? GetAllThePathFileName(int? theLimit, kommand<string?> parFormat, kommand<bool> fileNameOnly, DirectoryInfo theDir, string? searchPattern, SearchOption searchOption)
+    public override IEnumerable<string>? GetAllThePathFileName(int theLimit, string? parFormat, bool fileNameOnly, string theDir, string? searchPattern, SearchOption searchOption)
     {
-        var theFiles = theDir.EnumerateFiles(searchPattern, searchOption).Select(oo =>
+        var theDirInfo = new DirectoryInfo(theDir);
+        var theFiles = theDirInfo.EnumerateFiles(searchPattern, searchOption).Select(oo =>
         {
-            var itemString = fileNameOnly.isExists ? oo.Name : oo.FullName;
-            if (parFormat.isExists == false)
+            var itemString = fileNameOnly ? oo.Name : oo.FullName;
+            if (parFormat.isNullOrEmpty())
                 return itemString;
 
-            itemString = parFormat.theResult
+            itemString = parFormat
                 .Replace("$item", itemString)
                 .Replace("$name", oo.Name)
                 .Replace("$fullName", oo.FullName)
@@ -25,11 +27,11 @@ internal class myCore(string[] theArgs) : core_ddir.theCoreLogic(theArgs)
             return itemString;
         });
 
-        var theDirs = theDir.EnumerateDirectories(searchPattern, searchOption).Select(oo => fileNameOnly.isExists ? oo.Name : oo.FullName);
+        var theDirs = theDirInfo.EnumerateDirectories(searchPattern, searchOption).Select(oo => fileNameOnly ? oo.Name : oo.FullName);
         var theAll = theFiles.Concat(theDirs);
 
         if (theAll != null && theLimit != null)
-            theAll = theAll.Take(theLimit.Value);
+            theAll = theAll.Take(theLimit);
         return theAll;
     }
 }
