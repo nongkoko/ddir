@@ -1,7 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using findFirst;
 using jomiunsExtensions;
-using Vanara.PInvoke;
 
 internal class myCore(string[] theArgs) : core_ddir.theCoreLogic(theArgs)
 {
