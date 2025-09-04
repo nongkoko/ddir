@@ -16,8 +16,12 @@ Whether you're auditing files, scripting automation, or just want a smarter `dir
 &nbsp; Control the number of results returned.
 - 📄 **File name isolation** (`fileNameOnly`)  
 &nbsp; Extract and display only the file names.
+
+**ddir** is a lean, purpose-built alternative to dir, engineered for developers and power users who demand speed, control, and memory efficiency.
+When the `--limit` option is enabled, ddir switches to a low-level `FindFirstFile` traversal mode — tracing files one by one instead of bulk-fetching the entire directory. This means faster execution, lower memory footprint, and precise control over what gets scanned.
+
 ---
-Powered by **Kobra** for intuitive command parsing and designed with modularity in mind, `ddir` is perfect for:
+command parsing and designed with modularity in mind, `ddir` is perfect for:
 - Developers  
 - Sysadmins  
 - Automation enthusiasts  
